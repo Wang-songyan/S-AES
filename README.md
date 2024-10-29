@@ -42,7 +42,7 @@
 
 ### 3.1 目录结构
 
-![image]https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/1.png
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/1.png)
 
 ### 3.2 各个模块/文件的主要功能描述
 
@@ -172,4 +172,4 @@ HTML模板文件目录，使用Jinja2引擎渲染，动态生成网页内容。
 
 在此页面可以查看课程和共创者相关信息。
 
-![image]https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/2.png
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/2.png)
