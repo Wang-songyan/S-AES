@@ -173,3 +173,54 @@ HTML模板文件目录，使用Jinja2引擎渲染，动态生成网页内容。
 在此页面可以查看课程和共创者相关信息。
 
 ![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/2.png)
+
+# 运行结果
+
+## 5.1 第1关：基本测试
+
+### 根据S-AES算法编写和调试程序，提供GUI解密支持用户交互。输入可以是16bit的数据和16bit的密钥，输出是16bit的密文。
+
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/3.png)
+
+## 5.2 第2关：交叉测试
+
+### 我方加密结果：
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/4.png)
+
+### 对方解密结果：
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/5.png)
+
+### 对方加密结果：
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/6.png)
+
+### 我方解密结果：
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/7.png)
+
+## 5.3 第3关：扩展功能
+
+### 考虑到向实用性扩展，加密算法的数据输入可以是ASCII编码字符串(分组为2 Bytes)，对应地输出也可以是ASCII字符串(很可能是乱码)。
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/8.png)
+
+## 5.4 第4关：多重加密
+
+### 5.4.1 双重加密
+### 将S-AES算法通过双重加密进行扩展，分组长度仍然是16 bits，但密钥长度为32 bits。
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/9.png)
+
+### 5.4.2 中间相遇攻击
+### 假设你找到了使用相同密钥的明、密文对(一个或多个)，请尝试使用中间相遇攻击的方法找到正确的密钥Key(K1+K2)。
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/10.png)
+
+### 5.4.3 三重加密
+### 将S-AES算法通过三重加密进行扩展。
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/11.png)
+
+## 5.5 第5关：工作模式
+
+### 基于S-AES算法，使用密码分组链(CBC)模式对较长的明文消息进行加密。注意初始向量(16 bits) 的生成，并需要加解密双方共享。在CBC模式下进行加密，并尝试对密文分组进行替换或修改，然后进行解密，请对比篡改密文前后的解密结果。
+
+### 未篡改：
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/12.png)
+
+### 篡改密文后：
+![image](https://github.com/Wang-songyan/S-AES/blob/main/S_AES/photos/13.png)
