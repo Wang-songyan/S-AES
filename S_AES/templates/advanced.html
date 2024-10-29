@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>S-DES 加密与解密</title>
+    <style>
+        body {
+            font-family: 'Nunito', 'Roboto', sans-serif;
+            background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            font-size: 17px;
+        }
+
+        nav {
+            background-color: #2e867f;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding-left: 60px;
+        }
+
+        nav .brand {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-left: 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .main {
+            padding: 2rem;
+            margin-top: 70px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255);
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin: 1rem;
+            flex: 1;
+            min-width: 300px;
+            max-width: 350px;
+        }
+
+        .card h4 {
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            background-color: #2e867f;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #2c6f6d;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"]:focus {
+            border-color: #2e867f;
+            outline: none;
+        }
+
+        .output {
+            border: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255);
+            border-radius: 5px;
+            color: black;
+            width: 100%;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="brand">S-AES</div>
+        <div>
+            <a href="/main">关于我们</a>
+            <a href="/binary">二进制</a>
+            <a href="/">字符串</a>
+            <a href="/advanced">高级</a>
+            <a href="/cbc">CBC</a>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div class="form-row">
+            <div class="card">
+                <div class="card-body">
+                    <h4>双重加密（S-AES）</h4>
+                    <form id="double-encrypt-form" action="/double_encrypt_string" method="POST">
+                        <div class="form-group">
+                            <label for="plaintext-double-encrypt">明文:</label>
+                            <input type="text" id="plaintext-double-encrypt" name="plaintext">
+                        </div>
+                        <div class="form-group">
+                            <label for="key-double-encrypt">密钥 (32位):</label>
+                            <input type="text" id="key-double-encrypt" name="key" maxlength="32">
+                        </div>
+                        <button type="submit" class="btn">加密</button>
+                    </form>
+                    <h5>密文:</h5>
+                    <p id="double-ciphertext-output" class="output"></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h4>三重加密（S-AES）</h4>
+                    <form id="triple-encrypt-form" action="/triple_encrypt_string" method="POST">
+                        <div class="form-group">
+                            <label for="plaintext-triple-encrypt">明文:</label>
+                            <input type="text" id="plaintext-triple-encrypt" name="plaintext">
+                        </div>
+                        <div class="form-group">
+                            <label for="key-triple-encrypt">密钥 (32位):</label>
+                            <input type="text" id="key-triple-encrypt" name="key" maxlength="32">
+                        </div>
+                        <button type="submit" class="btn">加密</button>
+                    </form>
+                    <h5>密文:</h5>
+                    <p id="triple-ciphertext-output" class="output"></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h4>中间相遇攻击 (密钥)</h4>
+                    <form id="mitm-form" action="/meet_in_middle" method="POST">
+                        <div class="form-group">
+                            <label for="plaintext-mitm">明文:</label>
+                            <input type="text" id="plaintext-mitm" name="plaintext">
+                        </div>
+                        <div class="form-group">
+                            <label for="ciphertext-mitm">密文:</label>
+                            <input type="text" id="ciphertext-mitm" name="ciphertext">
+                        </div>
+                        <button type="submit" class="btn">攻击!</button>
+                    </form>
+                    <h5>可能的双重密钥:</h5>
+                    <ul id="possible-keys-list" class="output"></ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+<script>
+    // 处理双重加密表单提交
+    $("#double-encrypt-form").submit(function(event) {
+        event.preventDefault();
+        $.post("/double_encrypt_string", $(this).serialize(), function(data) {
+            $("#double-ciphertext-output").text(data.ciphertext);
+        });
+    });
+
+    // 处理三重加密表单提交
+    $("#triple-encrypt-form").submit(function(event) {
+        event.preventDefault();
+        $.post("/triple_encrypt_string", $(this).serialize(), function(data) {
+            $("#triple-ciphertext-output").text(data.ciphertext);
+        });
+    });
+
+    // 处理中间相遇攻击表单提交
+    $("#mitm-form").submit(function(event) {
+        event.preventDefault();
+        $.post("/meet_in_middle", $(this).serialize(), function(data) {
+            $("#possible-keys-list").empty();
+            $.each(data.possible_keys, function(i, key) {
+                $("#possible-keys-list").append("<li>" + key + "</li>");
+            });
+        });
+    });
+</script>
+</body>
+</html>

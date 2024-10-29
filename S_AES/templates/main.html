@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>S-DES</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            background-color: rgba(255, 255, 255, 0.3); /* 背景图片透明度 */
+            color: #333;
+        }
+        nav {
+            background-color: #2e867f;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding-left: 60px; /* S-DES 距离左边距 */
+        }
+        nav .brand {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 30px; /* S-DES 与第一个按钮之间的间距 */
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-left: 15px; /* 按钮之间的间距 */
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 60px); /* 调整高度以适应导航栏 */
+            margin-top: 60px; /* 为导航栏留出空间 */
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏开始 -->
+    <nav>
+        <div class="brand">S_AES</div>
+        <div>
+            <a href="/main">关于我们</a>
+            <a href="/binary">二进制</a>
+            <a href="/">字符串</a>
+            <a href="/advanced">高级</a>
+            <a href="/cbc">CBC</a>
+        </div>
+    </nav>
+    <!-- 导航栏结束 -->
+
+    <!-- 主内容部分 -->
+    <main class="main">
+        <div class="container">
+            <h1 style="font-size: 3rem;">关于我们</h1>
+            <h2>课程名称: 信息安全导论</h2>
+            <h3>指导教师: 向宏</h3>
+            <h3>项目成员：李晨雨、王松妍</h3>
+            <h2>算法简介:</h2>
+            <h3>SAES是一种简化的高级加密标准（AES）算法，主要用于教学和学习目的。SAES的设计目的是为了帮助理解AES的工作原理，同时保留AES的基本特性。</h3>
+        </div>
+    </main>
+    <!-- 主内容结束 -->
+</body>
+</html>

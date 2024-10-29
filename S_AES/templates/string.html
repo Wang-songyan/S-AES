@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>S-DES 加密与解密</title>
+    <style>
+        body {
+            font-family: 'Nunito', 'Roboto', sans-serif;
+            background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            font-size: 17px;
+        }
+        nav {
+            background-color: #2e867f;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding-left: 60px;
+        }
+        nav .brand {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 30px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-left: 15px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .main {
+            padding: 2rem;
+            margin-top: 70px;
+            display: flex;
+            justify-content: space-around; /* 横向排列 */
+            align-items: flex-start;
+        }
+        .card {
+            background-color: white; /* 默认白色背景 */
+            border: none;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            max-width: 350px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+        }
+        .card h4 {
+            margin-bottom: 1rem;
+        }
+        .btn {
+            background-color: #2e867f;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        .btn:hover {
+            background-color: #2c6f6d;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"]:focus {
+            border-color: #2e867f;
+            outline: none;
+        }
+        .output {
+            border: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255);
+            border-radius: 5px;
+            color: black;
+            width: 100%;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            width: 300px;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .close {
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="brand">S-AES</div>
+        <div>
+            <a href="/main">关于我们</a>
+            <a href="/binary">二进制</a>
+            <a href="/">字符串</a>
+            <a href="/advanced">高级</a>
+            <a href="/cbc">CBC</a>
+        </div>
+    </nav>
+
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h5>输入错误</h5>
+            <p id="errorMessage"></p>
+            <button class="btn" onclick="closeModal()">关闭</button>
+        </div>
+    </div>
+
+    <!-- 横向排列的 S-DES 加密部分 -->
+    <main class="main">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="heading h3 pt-3 pb-5">使用 S-AES 加密</h4>
+                <form id="encrypt-form" action="/encrypt_string" method="POST">
+                    <div class="form-group">
+                        <label for="plaintext-encrypt">明文：</label>
+                        <input type="text" class="form-control" id="plaintext-encrypt" name="plaintext" placeholder="例如：你好！">
+                    </div>
+                    <div class="form-group">
+                        <label for="key-encrypt">密钥 (16 位)：</label>
+                        <input type="text" class="form-control" id="key-encrypt" name="key" maxlength="16">
+                    </div>
+                    <button type="submit" class="btn btn-block btn-lg bg-primary mt-4 text-white">加密</button>
+                </form>
+                <h5 class="pt-4">密文：</h5>
+                <p id="ciphertext-output"></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h4 class="heading h3 pt-3 pb-5">使用 S-DES 解密</h4>
+                <form id="decrypt-form">
+                    <div class="form-group">
+                        <label for="ciphertext-decrypt">密文：</label>
+                        <input type="text" class="form-control" id="ciphertext-decrypt" name="ciphertext" placeholder="例如：******">
+                    </div>
+                    <div class="form-group">
+                        <label for="key-decrypt">密钥 (16 位)：</label>
+                        <input type="text" class="form-control" id="key-decrypt" name="key" maxlength="16">
+                    </div>
+                    <button type="submit" class="btn btn-block btn-lg bg-primary mt-4 text-white">解密</button>
+                </form>
+                <h5 class="pt-4">解密后的明文：</h5>
+                <p id="decrypted-plaintext-output"></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
+
+    <script>
+        // 加密表单的处理
+        $("#encrypt-form").submit(function(event) {
+            event.preventDefault();  // 阻止默认的表单提交行为
+            $.post("/encrypt_string", $(this).serialize(), function(data) {
+                $("#ciphertext-output").text(data.ciphertext);  // 将返回的密文显示在页面上
+            });
+        });
+
+        // 解密表单的处理
+        $("#decrypt-form").submit(function(event) {
+            event.preventDefault();
+            $.post("/decrypt_string", $(this).serialize(), function(data) {
+                $("#decrypted-plaintext-output").text(data.plaintext);  // 将返回的明文显示在页面上
+            });
+        });
+    </script>
+
+</body>
+</html>
